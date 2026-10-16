@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Game Library</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="side">
+  <div class="brand"><img src="icon.png" alt=""><div><b>Game Library</b><small>playtime &amp; achievements</small></div></div>
+  <nav>
+    <button data-view="library" class="active"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>Library</button>
+    <button data-view="activity"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Activity</button>
+    <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</button>
+  </nav>
+  <div class="now" id="now" hidden></div>
+  <div class="side-foot">
+    <div id="trackerState" class="tstate"></div>
+    <button class="btn ghost small" id="btnRefresh" title="Rescan drives and download anything missing">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>Refresh library</button>
+  </div>
+</aside>
+
+<main id="main">
+  <section id="v-library" class="view">
+    <header class="top">
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" placeholder="Search games"></div>
+      <div class="chips" id="filters">
+        <button data-f="all" class="on">Installed</button>
+        <button data-f="notinst">Not installed</button>
+        <button data-f="played">Played</button>
+        <button data-f="ach">In progress</button>
+        <button data-f="perfect">100%</button>
+        <button data-f="none">No achievements</button>
+        <button data-f="hidden">Hidden</button>
+      </div>
+      <select id="sort">
+        <option value="recent">Recently played</option>
+        <option value="time">Most played</option>
+        <option value="ach">Achievement %</option>
+        <option value="name">Name</option>
+        <option value="added">Recently added</option>
+      </select>
+    </header>
+    <div class="stats" id="libStats"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="v-game" class="view" hidden></section>
+  <section id="v-activity" class="view" hidden></section>
+  <section id="v-settings" class="view" hidden></section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+<div id="modal" class="modal" hidden><div class="dialog" id="dialog"></div></div>
+<div id="tip" class="tip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+pywebview==6.2.1
+psutil==7.2.2
+requests==2.34.2
+winotify==1.1.0
+pillow==12.3.0

@@ -1,4 +1,4 @@
-# Game Library
+# Local Game Genesys
 
 A playtime and achievement tracker for Windows PC games, wherever they came from: Steam, Epic, or a plain game folder on any drive.
 
@@ -29,16 +29,16 @@ It runs quietly in the background. When a game starts it records the session and
 
 ## Install
 
-1. Download the latest release zip from the [Releases page](../../releases) and extract it somewhere permanent (for example `D:\Apps\GameLibrary`).
+1. Download the latest release zip from the [Releases page](../../releases) and extract it somewhere permanent (for example `D:\Apps\LocalGameGenesys`).
 2. Double-click **`install.bat`**.
 
-The installer creates a private Python environment inside that folder and installs the dependencies from `requirements.txt`. It also adds a **Game Library** shortcut to the Desktop and the Start menu, plus a Startup shortcut that runs the background tracker at logon, and then opens the app.
+The installer creates a private Python environment inside that folder and installs the dependencies from `requirements.txt`. It also adds a **Local Game Genesys** shortcut to the Desktop and the Start menu, plus a Startup shortcut that runs the background tracker at logon, and then opens the app.
 
 On first start, open **Settings** and check **Drives to scan**. By default every fixed drive except the Windows drive is scanned. Then press **Save settings**.
 
 ## Tips
 
-- **Pop-ups don't appear while gaming?** Windows 11 turns on *Do not disturb* while a game is running. Go to Settings → System → Notifications → *Set priority notifications* and add **Game Library**, or turn off the *When playing a game* automatic rule. The top-of-screen pop-ups can't draw over games in exclusive fullscreen; use borderless/windowed fullscreen.
+- **Pop-ups don't appear while gaming?** Windows 11 turns on *Do not disturb* while a game is running. Go to Settings → System → Notifications → *Set priority notifications* and add **Local Game Genesys**, or turn off the *When playing a game* automatic rule. The top-of-screen pop-ups can't draw over games in exclusive fullscreen; use borderless/windowed fullscreen.
 - **Sounds:** none are included. Put your own `achievement.wav` in `sounds\` for achievement pop-ups (see `sounds\README.md`), or pick any `.wav` for the launch pop-up in Settings.
 - **Wrong game matched?** Open the game and use *Change Steam match* or *Not on Steam*.
 - **Unlocks not detected?** The game's page says so and offers *Locate unlock file…*. For GSE/Goldberg copies that shipped without an achievement list (they then discard every unlock), the page offers a fix that writes the downloaded list into the game's `steam_settings` folder.

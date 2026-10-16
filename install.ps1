@@ -1,4 +1,4 @@
-# Game Library installer: creates a private Python environment next to this file, installs the
+# Local Game Genesys installer: creates a private Python environment next to this file, installs the
 # dependencies, adds Desktop / Start menu / Startup shortcuts and opens the app.
 # Run it through install.bat, or:  powershell -ExecutionPolicy Bypass -File install.ps1
 param([switch]$NoShortcuts)
@@ -35,10 +35,10 @@ function New-Shortcut($path, $script) {
     $s.IconLocation = Join-Path $here "ui\icon.ico"
     $s.Save()
 }
-New-Shortcut (Join-Path $here "Game Library.lnk") "app.pyw"   # notifications open this one
-New-Shortcut (Join-Path ([Environment]::GetFolderPath("Desktop")) "Game Library.lnk") "app.pyw"
-New-Shortcut (Join-Path ([Environment]::GetFolderPath("Programs")) "Game Library.lnk") "app.pyw"
-New-Shortcut (Join-Path ([Environment]::GetFolderPath("Startup")) "Game Library (background).lnk") "tracker.pyw"
+New-Shortcut (Join-Path $here "Local Game Genesys.lnk") "app.pyw"   # notifications open this one
+New-Shortcut (Join-Path ([Environment]::GetFolderPath("Desktop")) "Local Game Genesys.lnk") "app.pyw"
+New-Shortcut (Join-Path ([Environment]::GetFolderPath("Programs")) "Local Game Genesys.lnk") "app.pyw"
+New-Shortcut (Join-Path ([Environment]::GetFolderPath("Startup")) "Local Game Genesys (background).lnk") "tracker.pyw"
 
-Write-Host "Installed. Opening Game Library..." -ForegroundColor Green
+Write-Host "Installed. Opening Local Game Genesys..." -ForegroundColor Green
 Start-Process $pyw "`"$(Join-Path $here 'app.pyw')`"" -WorkingDirectory $here

@@ -1,4 +1,4 @@
-"""Game Library (GameTracker) core: game discovery on the scan drives, playtime database, achievement
+"""Local Game Genesys (GameTracker) core: game discovery on the scan drives, playtime database, achievement
 schemas (downloaded when missing) and achievement progress from Steam and the common
 Steam emulators (GSE/Goldberg, CODEX, RUNE, EMPRESS, OnlineFix, Tenoke, local JSON).
 

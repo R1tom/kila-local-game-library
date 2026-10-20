@@ -1,4 +1,4 @@
-"""Local Game Genesys (GameTracker) core: game discovery on the scan drives, playtime database, achievement
+"""KILA Local Game Library (GameTracker) core: game discovery on the scan drives, playtime database, achievement
 schemas (downloaded when missing) and achievement progress from Steam and the common
 Steam emulators (GSE/Goldberg, CODEX, RUNE, EMPRESS, OnlineFix, Tenoke, local JSON).
 
@@ -81,7 +81,8 @@ DEFAULT_CONFIG = {
     "overlay_show_fps": True,          # FPS + frame-time graph (AMD driver FPS)
     "overlay_show_gpu": True,          # AMD GPU usage, clocks, temps, power, VRAM
     "overlay_show_system": True,       # CPU and RAM
-    "overlay_show_recording": True,    # GameRecorder / OBS status
+    "overlay_show_recording": True,    # OBS recording status
+    "overlay_recording_folder": "",    # where OBS saves recordings; empty = your Videos folder
     "overlay_show_achievements": True,
     "overlay_show_amd_settings": True,  # left panel: AMD settings, remembered per game
     "overlay_fps_counter": False,      # old setting: small FPS counter (now = overlay_pins ["fps"])

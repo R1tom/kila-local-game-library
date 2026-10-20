@@ -70,7 +70,7 @@ gdi32.DeleteObject.argtypes = [W.HGDIOBJ]
 gdi32.DeleteDC.argtypes = [W.HDC]
 kernel32.GetModuleHandleW.restype = W.HMODULE
 
-CLASS = "LocalGameGenesysPopup"
+CLASS = "KilaLibraryPopup"
 _wndproc = WNDPROC(lambda h, m, w, l: user32.DefWindowProcW(h, m, w, l))
 _registered = False
 

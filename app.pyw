@@ -1,4 +1,4 @@
-"""Local Game Genesys window: library, per-game playtime and achievements, activity and settings.
+"""KILA Local Game Library window: library, per-game playtime and achievements, activity and settings.
 The UI is ui\\index.html in an Edge WebView2 window (pywebview); images are served by a
 small local web server bound to 127.0.0.1.
 """
@@ -24,7 +24,7 @@ import core  # noqa: E402
 
 log = core.log
 UI = core.HERE / "ui"
-STARTUP_LNK = Path(os.environ["APPDATA"]) / r"Microsoft\Windows\Start Menu\Programs\Startup\Local Game Genesys (background).lnk"
+STARTUP_LNK = Path(os.environ["APPDATA"]) / r"Microsoft\Windows\Start Menu\Programs\Startup\KILA Local Game Library (background).lnk"
 PYTHONW = core.HERE / "venv" / "Scripts" / "pythonw.exe"
 
 
@@ -490,7 +490,7 @@ class Api:
 
 
 def focus_existing():
-    hwnd = ctypes.windll.user32.FindWindowW(None, "Local Game Genesys")
+    hwnd = ctypes.windll.user32.FindWindowW(None, "KILA Local Game Library")
     if hwnd:
         ctypes.windll.user32.ShowWindow(hwnd, 9)
         ctypes.windll.user32.SetForegroundWindow(hwnd)
@@ -498,19 +498,19 @@ def focus_existing():
 
 def main():
     core.setup_logging("app")
-    ctypes.windll.kernel32.CreateMutexW(None, False, "Local\\LocalGameGenesysUI")
+    ctypes.windll.kernel32.CreateMutexW(None, False, "Local\\KilaLibraryUI")
     if ctypes.windll.kernel32.GetLastError() == 183:
         focus_existing()
         return
     try:
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("LocalGameGenesys.App")
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("KilaLocalGameLibrary.App")
     except Exception:
         pass
     start_tracker()
     port = start_server()
     api = Api()
     page = next((a for a in sys.argv[1:] if a.startswith("#")), "")  # e.g. "#game=<id>", "#activity"
-    win = webview.create_window("Local Game Genesys", f"http://127.0.0.1:{port}/index.html{page}", js_api=api,
+    win = webview.create_window("KILA Local Game Library", f"http://127.0.0.1:{port}/index.html{page}", js_api=api,
                                 width=1400, height=880, min_size=(1040, 660), background_color="#0c0e13")
     api._window = win
     webview.start(private_mode=False, storage_path=str(core.DATA / "webview"),

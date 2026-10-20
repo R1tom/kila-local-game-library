@@ -1,4 +1,4 @@
-"""Local Game Genesys background service: records play sessions for games on the scan drives,
+"""KILA Local Game Library background service: records play sessions for games on the scan drives,
 watches achievement files and shows a notification for every new unlock.
 Started at logon (Startup folder) and by the GameTracker window. Log: data\\gametracker.log
 """
@@ -26,7 +26,7 @@ RELOAD_FLAG = core.DATA / "reload.flag"
 
 
 def single_instance():
-    h = ctypes.windll.kernel32.CreateMutexW(None, False, "Local\\LocalGameGenesysTracker")
+    h = ctypes.windll.kernel32.CreateMutexW(None, False, "Local\\KilaLibraryTracker")
     if ctypes.windll.kernel32.GetLastError() == 183:
         sys.exit(0)
     return h
@@ -38,14 +38,14 @@ def fmt_dur(s):
     return f"{h}h {m:02d}m" if h else f"{m}m"
 
 
-AUMID = "LocalGameGenesys.App"
+AUMID = "KilaLocalGameLibrary.App"
 
 
 def register_aumid():
     """Unpackaged apps need an AppUserModelId in the registry or Windows drops their toasts."""
     import winreg
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, rf"Software\Classes\AppUserModelId\{AUMID}") as k:
-        winreg.SetValueEx(k, "DisplayName", 0, winreg.REG_SZ, "Local Game Genesys")
+        winreg.SetValueEx(k, "DisplayName", 0, winreg.REG_SZ, "KILA Local Game Library")
         winreg.SetValueEx(k, "IconUri", 0, winreg.REG_SZ, str(core.HERE / "ui" / "icon.png"))
         winreg.SetValueEx(k, "IconBackgroundColor", 0, winreg.REG_SZ, "FF5B8CFF")
 
@@ -101,7 +101,7 @@ def toast(title, msg, icon=None, silent=False):
     try:
         _patch_winotify()
         from winotify import Notification, audio
-        app = core.HERE / "Local Game Genesys.lnk"
+        app = core.HERE / "KILA Local Game Library.lnk"
         n = Notification(app_id=AUMID, title=title, msg=msg,
                          icon=str(icon) if icon and Path(icon).exists() else str(core.HERE / "ui" / "icon.png"),
                          launch=str(app) if app.exists() else "")

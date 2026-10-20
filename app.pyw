@@ -410,7 +410,15 @@ class Api:
         cfg = core.load_config()
         drives = [f"{d}" for d in "CDEFGHIJKLMNOPQRSTUVWXYZ" if os.path.exists(f"{d}:\\")]
         return {"config": cfg, "drives": drives, "autostart": STARTUP_LNK.exists(), "tracker": tracker_running(),
-                "data_dir": str(core.DATA), "log": str(core.LOG_PATH), "defaults": core.DEFAULT_CONFIG}
+                "data_dir": str(core.DATA), "log": str(core.LOG_PATH), "defaults": core.DEFAULT_CONFIG,
+                "overlay_available": (core.HERE / "game_overlay.pyw").exists()}
+
+    def test_overlay(self, opts=None):
+        """Save the overlay settings and show the panel for 12 s (works without a game running)."""
+        if opts:
+            self.save_settings(opts)
+        (core.DATA / "overlay_preview.flag").touch()
+        return True
 
     def save_settings(self, new):
         cfg = core.load_config()
@@ -420,7 +428,7 @@ class Api:
             if k in new:
                 cfg[k] = new[k]
         for k in new:
-            if k.startswith("welcome_") and k in core.DEFAULT_CONFIG:
+            if k.startswith(("welcome_", "overlay_")) and k in core.DEFAULT_CONFIG:
                 cfg[k] = new[k]
         cfg["min_session_seconds"] = max(0, int(cfg.get("min_session_seconds", 60)))
         core.save_config(cfg)

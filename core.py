@@ -68,6 +68,25 @@ DEFAULT_CONFIG = {
     "welcome_seconds": 11,             # fully open, plus ~2 s sliding in and out
     "welcome_sound": "none",           # none | achievement | achievement-360 | path to a .wav
     "welcome_cooldown_minutes": 5,     # don't greet the same game again within this
+    # in-game overlay panel (game_overlay.pyw), opened with the controller Guide/PS button or a hotkey
+    "overlay_enabled": True,
+    "overlay_guide_button": True,
+    "overlay_hotkey": "Alt+G",         # Win+G stays reserved by Windows even without Game Bar; empty = none
+    "overlay_position": "right",       # left | center | right
+    "overlay_size": 1.0,
+    "overlay_opacity": 0.92,
+    "overlay_haze": 0.45,              # dark see-through veil over the game while open; 0 = off
+    "overlay_color": "#107C10",
+    "overlay_auto_hide": 0,            # seconds; 0 = stays until opened again
+    "overlay_show_fps": True,          # FPS + frame-time graph (AMD driver FPS)
+    "overlay_show_gpu": True,          # AMD GPU usage, clocks, temps, power, VRAM
+    "overlay_show_system": True,       # CPU and RAM
+    "overlay_show_recording": True,    # GameRecorder / OBS status
+    "overlay_show_achievements": True,
+    "overlay_show_amd_settings": True,  # left panel: AMD settings, remembered per game
+    "overlay_fps_counter": False,      # old setting: small FPS counter (now = overlay_pins ["fps"])
+    "overlay_fps_counter_position": "top-left",  # where the pinned stats strip sits
+    "overlay_pins": [],                # stats pinned on screen while playing (fps, frametime, gpu_usage, vram, ...)
     "steam_api_key": "",
     "store_country": "us",
 }

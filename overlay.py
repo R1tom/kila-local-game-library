@@ -21,6 +21,7 @@ user32 = ctypes.WinDLL("user32", use_last_error=True)
 gdi32 = ctypes.WinDLL("gdi32")
 kernel32 = ctypes.WinDLL("kernel32")
 winmm = ctypes.WinDLL("winmm")
+shell32 = ctypes.WinDLL("shell32")
 
 WNDPROC = ctypes.WINFUNCTYPE(ctypes.c_ssize_t, W.HWND, W.UINT, W.WPARAM, W.LPARAM)
 
@@ -219,6 +220,10 @@ class Card:
         self.hold = hold or HOLD_END
         self.total = DROP + EXPAND + self.hold + TEXT_OUT + COLLAPSE + RISE
 
+    def static(self, t):
+        """True during the still part of the hold: after the shine sweep, before the text fades out."""
+        return DROP + EXPAND + TEXT_IN + SHINE <= t < DROP + EXPAND + self.hold
+
     def frame(self, t):
         D, cx = self.D, self.W // 2
         e = 1.0  # pill expansion 0..1
@@ -332,19 +337,27 @@ def show(name, game, icon=None, pct=None, sound=None, head=None, hold=None, scal
         if sound and Path(sound).exists():
             import winsound
             winsound.PlaySound(str(sound), winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NODEFAULT)
-        shown = False
+        shown = still = False
         start = time.perf_counter()
         while True:
             t = time.perf_counter() - start
             if t > card.total:
                 break
-            data = _bgra_premultiplied(card.frame(t))
-            ctypes.memmove(bits, data, len(data))
-            user32.UpdateLayeredWindow(hwnd, screen, ctypes.byref(pt_dst), ctypes.byref(size), mem,
-                                       ctypes.byref(pt_src), 0, ctypes.byref(blend), 2)
+            if not (still and card.static(t)):  # the still part of the hold is drawn once
+                data = _bgra_premultiplied(card.frame(t))
+                ctypes.memmove(bits, data, len(data))
+                user32.UpdateLayeredWindow(hwnd, screen, ctypes.byref(pt_dst), ctypes.byref(size), mem,
+                                           ctypes.byref(pt_src), 0, ctypes.byref(blend), 2)
+                still = card.static(t)
             if not shown:
                 user32.ShowWindow(hwnd, 4)  # SW_SHOWNOACTIVATE
                 shown = True
+                top_at = 0.0
+            # a starting game often puts its own window on top: take the top back at show and once ~1 s later,
+            # never repeatedly (re-asserting TOPMOST over an exclusive-fullscreen game can minimize it)
+            if top_at is not None and t >= top_at:
+                user32.SetWindowPos(hwnd, W.HWND(-1), 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010)  # TOPMOST, no activate
+                top_at = 1.0 if top_at == 0.0 else None
             while user32.PeekMessageW(ctypes.byref(msg), None, 0, 0, 1):
                 user32.TranslateMessage(ctypes.byref(msg))
                 user32.DispatchMessageW(ctypes.byref(msg))
@@ -364,4 +377,5 @@ if __name__ == "__main__":
     import sys
     icons = sorted((HERE / "data" / "cache" / "icons").glob("*/*.jpg"))
     pct = float(sys.argv[1]) if len(sys.argv) > 1 else 23.4
-    show("Sound test", "Test Game", icons[0] if icons else None, pct, HERE / "sounds" / "achievement.wav")
+    show("Sound test", "Test Game", icons[0] if icons else None, pct,
+         HERE / "sounds" / ("achievement-rare.wav" if pct is not None and pct < 10 else "achievement.wav"))

@@ -420,6 +420,10 @@ async function loadActivity() {
 }
 
 // ---------------------------------------------------------------- settings
+const OV_PINS = [["fps", "FPS"], ["frametime", "Frame time"], ["gpu_usage", "GPU usage"], ["gpu_temp", "GPU temp"],
+  ["gpu_hotspot", "GPU hotspot"], ["gpu_clock", "GPU clock"], ["gpu_power", "Board power"], ["gpu_fan", "GPU fan"],
+  ["vram", "VRAM"], ["cpu", "CPU"], ["ram", "RAM"], ["rec", "Recording"], ["ach", "Achievements"]];
+
 async function loadSettings() {
   const s = await api("settings"), c = s.config, el = $("#v-settings");
   const sw = (id, on) => `<label class="switch"><input type="checkbox" id="${id}" ${on ? "checked" : ""}><span></span></label>`;
@@ -467,6 +471,32 @@ async function loadSettings() {
         <div class="row"><div class="l"><b>Try it</b><small>Uses the settings above, even before you save.</small></div>
           <span style="display:flex;gap:8px"><button class="btn small" id="wReset">Reset to default</button><button class="btn small primary" id="testWelcome">Preview</button></span></div>
       </div>
+      ${s.overlay_available ? `<div class="card"><h3>Game overlay</h3>
+        <div class="row"><div class="l"><b>In-game overlay</b><small>A panel over the game with FPS, AMD GPU stats, recording and achievements. Only works while a game is running.</small></div>${sw("ovOn", c.overlay_enabled !== false)}</div>
+        <div class="row"><div class="l"><b>Open with the controller's Guide / PS button</b></div>${sw("ovGuide", c.overlay_guide_button !== false)}</div>
+        <div class="row"><div class="l"><b>Keyboard shortcut</b><small>For example Alt+G or F10. (Win+G is kept by Windows itself.) Leave empty for none.</small></div>
+          <input type="text" id="ovKey" maxlength="30" style="width:160px" value="${esc(c.overlay_hotkey)}"></div>
+        <div class="row" style="display:block"><div class="l"><b>Show in the panel</b></div>
+          <div class="drv" style="margin-top:8px">${[["ovFps", "overlay_show_fps", "FPS + frame-time graph"], ["ovGpu", "overlay_show_gpu", "AMD GPU stats"], ["ovSys", "overlay_show_system", "CPU and RAM"], ["ovRec", "overlay_show_recording", "Recording status"], ["ovAch", "overlay_show_achievements", "Achievements"], ["ovAmd", "overlay_show_amd_settings", "AMD settings panel (saved per game)"]].map(([id, k, t]) => `<label><input type="checkbox" id="${id}" ${c[k] !== false ? "checked" : ""}>${t}</label>`).join("")}</div></div>
+        <div class="row"><div class="l"><b>Position</b></div>
+          <select id="ovPos"><option value="right">Right side</option><option value="center">Middle</option><option value="left">Left side</option></select></div>
+        <div class="row"><div class="l"><b>Size</b></div>
+          <span style="display:flex;align-items:center;gap:10px"><input type="range" id="ovSize" min="0.7" max="1.6" step="0.05" value="${c.overlay_size}" style="width:180px"><b id="ovSizeV" style="width:46px;text-align:right"></b></span></div>
+        <div class="row"><div class="l"><b>Opacity</b></div>
+          <span style="display:flex;align-items:center;gap:10px"><input type="range" id="ovAlpha" min="0.5" max="1" step="0.02" value="${c.overlay_opacity}" style="width:180px"><b id="ovAlphaV" style="width:46px;text-align:right"></b></span></div>
+        <div class="row"><div class="l"><b>Haze over the game</b><small>Darkens the game behind the panels while they're open. 0% = off.</small></div>
+          <span style="display:flex;align-items:center;gap:10px"><input type="range" id="ovHaze" min="0" max="0.8" step="0.05" value="${c.overlay_haze}" style="width:180px"><b id="ovHazeV" style="width:46px;text-align:right"></b></span></div>
+        <div class="row"><div class="l"><b>Colour</b><small>Outline, bars and graph.</small></div>
+          <input type="color" id="ovColor" value="${esc(c.overlay_color)}" style="width:52px;height:32px;padding:2px;cursor:pointer"></div>
+        <div class="row"><div class="l"><b>Close by itself after</b><small>0 = stays until you press the button again.</small></div>
+          <span><input type="number" id="ovAuto" min="0" max="120" style="width:70px" value="${c.overlay_auto_hide}"> sec</span></div>
+        <div class="row" style="display:block"><div class="l"><b>Pinned on screen while playing</b><small>Stays visible after the overlay closes. You can also pin by clicking a stat in the overlay (or RB, then A).</small></div>
+          <div class="drv" style="margin-top:8px">${OV_PINS.map(([k, t]) => `<label><input type="checkbox" data-pin="${k}" ${(c.overlay_pins || []).includes(k) || (k === "fps" && !(c.overlay_pins || []).length && c.overlay_fps_counter) ? "checked" : ""}>${t}</label>`).join("")}</div></div>
+        <div class="row"><div class="l"><b>Where the pinned stats sit</b></div>
+          <select id="ovCntPos"><option value="top-left">Top left</option><option value="top-right">Top right</option><option value="bottom-left">Bottom left</option><option value="bottom-right">Bottom right</option></select></div>
+        <div class="row"><div class="l"><b>Try it</b><small>Saves these settings and shows the panel for 12 seconds.</small></div>
+          <span style="display:flex;gap:8px"><button class="btn small" id="ovReset">Reset to default</button><button class="btn small primary" id="testOverlay">Preview</button></span></div>
+      </div>` : ""}
       <div class="card"><h3>Downloads</h3>
         <div class="row"><div class="l"><b>Steam Web API key</b><small>Optional. Without it, achievement lists come from SteamHunters and the Steam Community.
           With one you also get locked icons and hidden flags. Free at <a href="#" id="keyLink" style="color:var(--accent)">steamcommunity.com/dev/apikey</a>.</small></div>
@@ -513,11 +543,38 @@ async function loadSettings() {
     await api("save_settings", Object.fromEntries(Object.keys(d).filter(k => k.startsWith("welcome_")).map(k => [k, d[k]])));
     note("Launch pop-up reset to default"); loadSettings();
   };
+  const overlayOpts = () => !s.overlay_available ? {} : ({
+    overlay_enabled: $("#ovOn").checked, overlay_guide_button: $("#ovGuide").checked,
+    overlay_hotkey: $("#ovKey").value.trim(),
+    overlay_show_fps: $("#ovFps").checked, overlay_show_gpu: $("#ovGpu").checked, overlay_show_system: $("#ovSys").checked,
+    overlay_show_recording: $("#ovRec").checked, overlay_show_achievements: $("#ovAch").checked,
+    overlay_show_amd_settings: $("#ovAmd").checked,
+    overlay_position: $("#ovPos").value, overlay_size: +$("#ovSize").value, overlay_opacity: +$("#ovAlpha").value,
+    overlay_haze: +$("#ovHaze").value,
+    overlay_color: $("#ovColor").value, overlay_auto_hide: Math.min(120, Math.max(0, +$("#ovAuto").value || 0)),
+    overlay_pins: $$("[data-pin]").filter(x => x.checked).map(x => x.dataset.pin), overlay_fps_counter: false,
+    overlay_fps_counter_position: $("#ovCntPos").value,
+  });
+  if (s.overlay_available) {
+    $("#ovPos").value = c.overlay_position; $("#ovCntPos").value = c.overlay_fps_counter_position;
+    const ovSync = () => {
+      $("#ovSizeV").textContent = Math.round($("#ovSize").value * 100) + "%";
+      $("#ovAlphaV").textContent = Math.round($("#ovAlpha").value * 100) + "%";
+      $("#ovHazeV").textContent = Math.round($("#ovHaze").value * 100) + "%";
+    };
+    ovSync(); $("#ovSize").oninput = ovSync; $("#ovAlpha").oninput = ovSync; $("#ovHaze").oninput = ovSync;
+    $("#testOverlay").onclick = async () => { await api("test_overlay", overlayOpts()); note("Overlay preview for 12 seconds"); };
+    $("#ovReset").onclick = async () => {
+      const d = s.defaults;
+      await api("save_settings", Object.fromEntries(Object.keys(d).filter(k => k.startsWith("overlay_")).map(k => [k, d[k]])));
+      note("Game overlay reset to default"); loadSettings();
+    };
+  }
   const collect = () => ({
     scan_drives: $$("[data-drive]").filter(x => x.checked).map(x => x.dataset.drive),
     exclude_folders: $("#excl").value.split("\n").map(x => x.trim()).filter(Boolean),
     notifications: $("#notif").checked, session_summary: $("#summary").checked,
-    ...welcomeOpts(),
+    ...welcomeOpts(), ...overlayOpts(),
     min_session_seconds: +$("#minSess").value || 0, steam_api_key: $("#apikey").value.trim(), store_country: $("#cc").value,
   });
   $("#saveSet").onclick = async () => { await api("save_settings", collect()); note("Settings saved. Rescanning…"); await api("refresh_all", false); pollSoon(); };

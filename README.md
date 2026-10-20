@@ -71,6 +71,17 @@ Everything stays on your PC. The app only connects to the internet to download g
 
 Not affiliated with Valve, Microsoft, Epic Games or AMD. Game names, covers and achievement data belong to their respective owners and are downloaded on your PC at run time; none are included in this repository.
 
+## Changelog
+
+**1.1.0**
+- Launch pop-up waits until the game's window has settled, so it no longer blinks while the game switches resolution, and it isn't shown again after sleep/resume or a tracker restart mid-game.
+- A burst of more than 4 unlocks shows the first 3 pop-ups, then one "+N more achievements" summary.
+- Rare unlocks (under 10% of players) play `sounds\achievement-rare.wav` if you add one.
+- No drive scans or downloads while a game is running; no "Played …" toast over a game resumed from sleep.
+- Toasts no longer flash a PowerShell window over the game; pop-ups take the top back once if a starting game covers them, and use less CPU while holding still.
+
+**1.0.0** — first release.
+
 ## License
 
 [MIT](LICENSE)
